@@ -41,18 +41,8 @@ class BookingConfirmedEmail extends Mailable
             with: [
                 'customerName' => $this->booking->customer_name,
                 'numberOfPeople' => $this->booking->number_of_people,
-                'bookingDate' => $this->booking->booking_date,
-                'tour' => [
-                    'name' => $this->booking->tour->name,
-                    'price' => $this->booking->tour->price,
-                    'startDate' => $this->booking->tour->start_date,
-                    'endDate' => $this->booking->tour->end_date,
-                ],
-                'hotel' => [
-                    'name' => $this->booking->hotel->name,
-                    'pricePerNight' => $this->booking->hotel->price_per_night,
-                    'address' => $this->booking->hotel->address,
-                ],
+                'tourName' => $this->booking->tour->name,
+                'hotelName' => $this->booking->hotel->name,
             ]
         );
     }
