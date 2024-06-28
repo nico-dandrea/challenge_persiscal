@@ -2,15 +2,15 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use App\Casts\BookingStatus;
 use App\Traits\FiltersNames;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Booking extends Model
 {
-    use HasFactory, FiltersNames;
+    use FiltersNames, HasFactory;
 
     /**
      * The attributes that should be cast.
@@ -37,8 +37,6 @@ class Booking extends Model
 
     /**
      * Get the tour that owns the Booking
-     *
-     * @return BelongsTo
      */
     public function tour(): BelongsTo
     {
@@ -47,8 +45,6 @@ class Booking extends Model
 
     /**
      * Get the hotel that owns the Booking
-     *
-     * @return BelongsTo
      */
     public function hotel(): BelongsTo
     {
@@ -57,8 +53,6 @@ class Booking extends Model
 
     /**
      * Determine if the booking can be canceled.
-     *
-     * @return bool
      */
     public function canBeCanceled(): bool
     {

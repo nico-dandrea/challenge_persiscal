@@ -38,7 +38,7 @@ it('can retrieve tours with filters', function () {
     $tour2 = Tour::factory()->create(['price' => 200, 'start_date' => now()->subDays(1), 'end_date' => now()]);
     $tour3 = Tour::factory()->create(['price' => 300, 'start_date' => now(), 'end_date' => now()->addDay()]);
 
-    $response = $this->getJson('/api/tours?min_price=150&max_price=250&start_date=' . now()->subDays(1)->toDateString() . '&end_date=' . now()->toDateString());
+    $response = $this->getJson('/api/tours?min_price=150&max_price=250&start_date='.now()->subDays(1)->toDateString().'&end_date='.now()->toDateString());
     $response->assertStatus(Response::HTTP_OK)
         ->assertJsonFragment(['id' => $tour2->id])
         ->assertJsonMissing(['id' => $tour1->id])
@@ -79,7 +79,7 @@ it('can update a tour', function () {
 it('fails to update a tour with invalid data', function () {
     $tour = Tour::factory()->create();
 
-    $response = $this->putJson("/api/tours/{$tour->id}", 
+    $response = $this->putJson("/api/tours/{$tour->id}",
         ['name' => '', 'description' => '', 'price' => '', 'start_date' => '', 'end_date' => '']
     );
     $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)

@@ -28,7 +28,7 @@ class TourController extends Controller
         }
 
         $filters = $request->except(['min_price', 'max_price', 'start_date', 'end_date']);
-        
+
         $tours = $query->filter($filters)->get();
 
         return response()->json($tours, 200);
@@ -45,6 +45,7 @@ class TourController extends Controller
         ]);
 
         $tour = Tour::create($validatedData);
+
         return response()->json($tour, 201);
     }
 
@@ -64,12 +65,14 @@ class TourController extends Controller
         ]);
 
         $tour->update($validatedData);
+
         return response()->json($tour, 200);
     }
 
     public function destroy(Tour $tour)
     {
         $tour->delete();
+
         return response()->json(null, 204);
     }
 }

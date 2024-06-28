@@ -28,7 +28,7 @@ class HotelController extends Controller
         }
 
         $filters = $request->except(['min_rating', 'max_rating', 'min_price', 'max_price']);
-        
+
         $hotels = $query->filter($filters)->get();
 
         return response()->json($hotels, 200);
@@ -45,6 +45,7 @@ class HotelController extends Controller
         ]);
 
         $hotel = Hotel::create($validatedData);
+
         return response()->json($hotel, 201);
     }
 
@@ -64,12 +65,14 @@ class HotelController extends Controller
         ]);
 
         $hotel->update($validatedData);
+
         return response()->json($hotel, 200);
     }
 
     public function destroy(Hotel $hotel)
     {
         $hotel->delete();
+
         return response()->json(null, 204);
     }
 }

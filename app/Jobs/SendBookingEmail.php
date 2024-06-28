@@ -17,7 +17,7 @@ class SendBookingEmail
      */
     public function __construct(
         public Booking $booking
-    ){}
+    ) {}
 
     /**
      * Execute the job.

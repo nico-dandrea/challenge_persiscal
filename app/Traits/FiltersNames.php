@@ -2,13 +2,11 @@
 
 namespace App\Traits;
 
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Str;
 use App\Models\Booking;
 use App\Models\Hotel;
 use App\Models\Tour;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Str;
 
 trait FiltersNames
 {
@@ -20,7 +18,7 @@ trait FiltersNames
     protected function applyFilters(Builder $query, array $filters)
     {
         foreach ($filters as $filter => $value) {
-            $method = 'filter' . ucfirst(Str::camel($filter));
+            $method = 'filter'.ucfirst(Str::camel($filter));
 
             if (method_exists($this, $method)) {
                 $this->{$method}($query, $value);
@@ -75,6 +73,7 @@ trait FiltersNames
                 } else {
                     $query->where($column, 'like', "%{$value}%");
                 }
+
                 return;
             }
         }

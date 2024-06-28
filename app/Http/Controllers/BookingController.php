@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Booking;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse as Response;
+use Illuminate\Http\Request;
 
 class BookingController extends Controller
 {
@@ -21,7 +21,7 @@ class BookingController extends Controller
         }
 
         $filters = $request->except(['start_date', 'end_date']);
-        
+
         $bookings = $query->filter($filters)->with(['tour', 'hotel'])->get();
 
         return response()->json($bookings, Response::HTTP_OK);
@@ -62,13 +62,15 @@ class BookingController extends Controller
         ]);
 
         $booking->update($validatedData);
+
         return response()->json($booking, Response::HTTP_OK);
     }
 
     public function destroy(Booking $booking): Response
     {
         $booking->delete();
-        return response()->json(["id" => $booking->id], Response::HTTP_NO_CONTENT);
+
+        return response()->json(['id' => $booking->id], Response::HTTP_NO_CONTENT);
     }
 
     public function cancel(Booking $booking): Response
@@ -76,12 +78,13 @@ class BookingController extends Controller
         try {
             $booking->status = \App\Enums\BookingStatusEnum::CANCELED;
             $booking->save();
+
             return response()->json([
-                "message" => "The booking has been canceled successfully"
+                'message' => 'The booking has been canceled successfully',
             ], Response::HTTP_OK);
         } catch (\App\Exceptions\CannotCancelConfirmedBookingException $e) {
             return response()->json([
-                "message" => $e->getMessage()
+                'message' => $e->getMessage(),
             ], Response::HTTP_BAD_REQUEST);
         }
     }

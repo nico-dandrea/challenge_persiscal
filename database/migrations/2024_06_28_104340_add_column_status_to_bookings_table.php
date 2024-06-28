@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::table('bookings', function (Blueprint $table) {
             $table->enum('status', [
-                collect(BookingStatusEnum::cases())->pluck('value')->toArray()
+                collect(BookingStatusEnum::cases())->pluck('value')->toArray(),
             ])->default(BookingStatusEnum::CONFIRMED->value)->after('booking_date');
         });
     }

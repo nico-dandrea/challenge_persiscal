@@ -2,9 +2,9 @@
 
 namespace App\Casts;
 
+use App\Enums\BookingStatusEnum;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Database\Eloquent\Model;
-use App\Enums\BookingStatusEnum;
 
 class BookingStatus implements CastsAttributes
 {
@@ -26,7 +26,7 @@ class BookingStatus implements CastsAttributes
      */
     public function set(Model $model, string $key, mixed $status, array $attributes): mixed
     {
-        if (!$status instanceof BookingStatusEnum) {
+        if (! $status instanceof BookingStatusEnum) {
             throw new \InvalidArgumentException('Invalid booking status');
         }
 
@@ -35,6 +35,7 @@ class BookingStatus implements CastsAttributes
         if ($attributes['status'] === $canceled && $status->value === $canceled) {
             throw new \App\Exceptions\CannotCancelConfirmedBookingException($attributes['id']);
         }
+
         return $status;
     }
 }

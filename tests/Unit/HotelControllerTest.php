@@ -82,7 +82,7 @@ it('can update a hotel', function () {
 it('fails to update a hotel with invalid data', function () {
     $hotel = Hotel::factory()->create();
 
-    $response = $this->putJson("/api/hotels/{$hotel->id}", 
+    $response = $this->putJson("/api/hotels/{$hotel->id}",
         ['name' => '', 'description' => '', 'address' => '', 'rating' => '', 'price_per_night' => '']
     );
     $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)

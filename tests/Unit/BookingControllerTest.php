@@ -1,8 +1,8 @@
 <?php
 
 use App\Models\Booking;
-use App\Models\Tour;
 use App\Models\Hotel;
+use App\Models\Tour;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Benchmark;
 use Symfony\Component\HttpFoundation\Response;
@@ -42,23 +42,22 @@ it('can retrieve all bookings', function () {
         ->assertJsonCount(3);
 });
 
-it('can retrieve all bookings performing ok', function(){
+it('can retrieve all bookings performing ok', function () {
     Booking::factory()->count(1000)->create();
 
     $benchmark = Benchmark::measure([
-        'normal' => fn () => $this->get('/api/bookings')
+        'normal' => fn () => $this->get('/api/bookings'),
     ]);
 
     $this->assertTrue($benchmark['normal'] < 300);
 })->repeat(10)->skip('Skipped until benchmark is fixed');
-
 
 it('can retrieve bookings with filters', function () {
     $booking1 = Booking::factory()->create(['booking_date' => now()->subDays(2)]);
     $booking2 = Booking::factory()->create(['booking_date' => now()->subDays(1)]);
     $booking3 = Booking::factory()->create(['booking_date' => now()]);
 
-    $response = $this->getJson('/api/bookings?start_date=' . now()->subDays(1)->toDateString());
+    $response = $this->getJson('/api/bookings?start_date='.now()->subDays(1)->toDateString());
     $response->assertStatus(Response::HTTP_OK)
         ->assertJsonFragment(['id' => $booking2->id])
         ->assertJsonFragment(['id' => $booking3->id])
@@ -101,7 +100,7 @@ it('can update a booking', function () {
 it('fails to update a booking with invalid data', function () {
     $booking = Booking::factory()->create();
 
-    $response = $this->putJson("/api/bookings/{$booking->id}", 
+    $response = $this->putJson("/api/bookings/{$booking->id}",
         ['tour_id' => '', 'hotel_id' => '', 'customer_name' => '', 'customer_email' => '', 'number_of_people' => '', 'booking_date' => '']);
     $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
         ->assertJsonValidationErrors(['tour_id', 'hotel_id', 'customer_name', 'customer_email', 'number_of_people', 'booking_date']);
