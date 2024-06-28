@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\BookingConfirmed;
 use App\Models\Booking;
 use Illuminate\Http\Request;
 
@@ -41,6 +42,9 @@ class BookingController extends Controller
         ]);
 
         $booking = Booking::create($validatedData);
+
+        BookingConfirmed::dispatch($booking->load('tour', 'hotel'));
+
         return response()->json($booking, 201);
     }
 
