@@ -4,11 +4,27 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Casts\BookingStatus;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Booking extends Model
 {
     use HasFactory;
 
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'status' => BookingStatus::class,
+    ];
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
     protected $fillable = [
         'tour_id',
         'hotel_id',
@@ -18,13 +34,33 @@ class Booking extends Model
         'booking_date',
     ];
 
-    public function tour()
+    /**
+     * Get the tour that owns the Booking
+     *
+     * @return BelongsTo
+     */
+    public function tour(): BelongsTo
     {
         return $this->belongsTo(Tour::class);
     }
 
-    public function hotel()
+    /**
+     * Get the hotel that owns the Booking
+     *
+     * @return BelongsTo
+     */
+    public function hotel(): BelongsTo
     {
         return $this->belongsTo(Hotel::class);
+    }
+
+    /**
+     * Determine if the booking can be canceled.
+     *
+     * @return bool
+     */
+    public function canBeCanceled(): bool
+    {
+        return $this->status === \App\Enums\BookingStatusEnum::CONFIRMED;
     }
 }
