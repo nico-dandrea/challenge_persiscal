@@ -27,7 +27,11 @@ class HotelController extends Controller
             $query->where('price_per_night', '<=', $request->max_price);
         }
 
-        return response()->json($query->get(), 200);
+        $filters = $request->except(['min_rating', 'max_rating', 'min_price', 'max_price']);
+        
+        $hotels = $query->filter($filters)->get();
+
+        return response()->json($hotels, 200);
     }
 
     public function store(Request $request)

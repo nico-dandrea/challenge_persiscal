@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\FiltersNames;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Tour extends Model
 {
-    use HasFactory;
+    use HasFactory, FiltersNames;
 
     protected $fillable = [
         'name',

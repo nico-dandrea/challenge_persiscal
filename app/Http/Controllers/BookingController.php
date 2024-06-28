@@ -20,12 +20,9 @@ class BookingController extends Controller
             $query->where('booking_date', '<=', $request->end_date);
         }
 
-        $bookings = $query->get();
-
-        foreach ($bookings as $booking) {
-            $booking->tour;
-            $booking->hotel;
-        }
+        $filters = $request->except(['start_date', 'end_date']);
+        
+        $bookings = $query->filter($filters)->with(['tour', 'hotel'])->get();
 
         return response()->json($bookings, Response::HTTP_OK);
     }
@@ -71,7 +68,7 @@ class BookingController extends Controller
     public function destroy(Booking $booking): Response
     {
         $booking->delete();
-        return response()->json(["id" => $booking->id], Response::HTTP_OK);
+        return response()->json(["id" => $booking->id], Response::HTTP_NO_CONTENT);
     }
 
     public function cancel(Booking $booking): Response

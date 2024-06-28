@@ -27,7 +27,11 @@ class TourController extends Controller
             $query->where('end_date', '<=', $request->end_date);
         }
 
-        return response()->json($query->get(), 200);
+        $filters = $request->except(['min_price', 'max_price', 'start_date', 'end_date']);
+        
+        $tours = $query->filter($filters)->get();
+
+        return response()->json($tours, 200);
     }
 
     public function store(Request $request)
