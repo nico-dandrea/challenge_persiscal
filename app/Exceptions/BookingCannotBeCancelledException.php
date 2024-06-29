@@ -18,7 +18,7 @@ class BookingCannotBeCancelledException extends Exception
         $this->bookingId = $bookingId;
 
         // Customize the exception message
-        $message = 'Cannot cancel a confirmed booking.';
+        $message = 'Cannot cancel an already cancelled booking.';
 
         parent::__construct($message);
     }
@@ -36,9 +36,9 @@ class BookingCannotBeCancelledException extends Exception
     /**
      * Render the exception into an HTTP response.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function render(\Illuminate\Http\Request $request)
+    public function render(\Illuminate\Http\Request $request): \Illuminate\Http\JsonResponse
     {
         return response()->json([
             'message' => $this->getMessage(),

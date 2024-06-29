@@ -56,6 +56,6 @@ class Booking extends Model
      */
     public function canBeCancelled(): bool
     {
-        return $this->status === \App\Enums\BookingStatusEnum::CONFIRMED;
+        return $this->status === \App\Enums\BookingStatusEnum::CONFIRMED->value;
     }
 }

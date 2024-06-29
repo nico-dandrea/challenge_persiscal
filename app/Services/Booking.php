@@ -28,4 +28,17 @@ class Booking
 
         return new BookingResource($booking);
     }
+
+    /**
+     * Cancels a booking
+     */
+    public function cancel(BookingModel $booking): void
+    {
+        if (!$booking->canBeCancelled()) {
+            throw new \App\Exceptions\BookingCannotBeCancelledException($booking->id);
+        }
+
+        $booking->status = \App\Enums\BookingStatusEnum::CANCELLED;
+        $booking->save();
+    }
 }

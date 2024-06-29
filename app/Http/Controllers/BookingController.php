@@ -59,11 +59,9 @@ class BookingController extends Controller
     public function cancel(Booking $booking): Response
     {
         try {
-            $booking->status = \App\Enums\BookingStatusEnum::CANCELLED;
-            $booking->save();
-
+            $this->bookingService->cancel($booking);
             return response()->json([
-                'message' => 'The booking has been canceLled successfully',
+                'message' => sprintf('The booking (ID: %s) has been canceLled successfully', $booking->id),
             ], Response::HTTP_OK);
         } catch (\App\Exceptions\BookingCannotBeCancelledException $e) {
             return response()->json([
