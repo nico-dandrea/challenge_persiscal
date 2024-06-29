@@ -34,7 +34,7 @@ class Booking
      */
     public function cancel(BookingModel $booking): void
     {
-        if (!$booking->canBeCancelled()) {
+        if (! $booking->canBeCancelled()) {
             throw new \App\Exceptions\BookingCannotBeCancelledException($booking->id);
         }
 

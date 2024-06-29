@@ -60,6 +60,7 @@ class BookingController extends Controller
     {
         try {
             $this->bookingService->cancel($booking);
+
             return response()->json([
                 'message' => sprintf('The booking (ID: %s) has been canceLled successfully', $booking->id),
             ], Response::HTTP_OK);

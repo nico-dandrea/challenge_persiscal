@@ -35,8 +35,6 @@ class BookingCannotBeCancelledException extends Exception
 
     /**
      * Render the exception into an HTTP response.
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function render(\Illuminate\Http\Request $request): \Illuminate\Http\JsonResponse
     {
