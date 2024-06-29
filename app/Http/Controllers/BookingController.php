@@ -4,14 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Exports\BookingsExport;
 use App\Http\Resources\BookingResource;
-use App\Services\Booking as BookingService;
 use App\Models\Booking;
+use App\Services\Booking as BookingService;
 use Illuminate\Http\JsonResponse as Response;
 use Illuminate\Http\Request;
 
 class BookingController extends Controller
 {
-    public function __construct(protected BookingService $bookingService){}
+    public function __construct(protected BookingService $bookingService) {}
 
     public function index(Request $request): Response
     {
@@ -35,7 +35,7 @@ class BookingController extends Controller
     public function store(\App\Http\Requests\StoreBookingRequest $request): Response
     {
         return $this->bookingService->create($request->validated())
-                    ->response()->setStatusCode(Response::HTTP_CREATED);
+            ->response()->setStatusCode(Response::HTTP_CREATED);
     }
 
     public function show(Booking $booking): Response
@@ -46,7 +46,7 @@ class BookingController extends Controller
     public function update(\App\Http\Requests\UpdateBookingRequest $request, Booking $booking): Response
     {
         return $this->bookingService->update($request->validated(), $booking)
-                    ->response()->setStatusCode(Response::HTTP_OK);
+            ->response()->setStatusCode(Response::HTTP_OK);
     }
 
     public function destroy(Booking $booking): Response

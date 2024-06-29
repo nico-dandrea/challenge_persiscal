@@ -39,6 +39,7 @@ class TourController extends Controller
     public function store(\App\Http\Requests\StoreTourRequest $request): Response
     {
         $tour = Tour::create($request->validated());
+
         return (new TourResource($tour))->response()->setStatusCode(Response::HTTP_CREATED);
     }
 
@@ -50,6 +51,7 @@ class TourController extends Controller
     public function update(\App\Http\Requests\UpdateTourRequest $request, Tour $tour): Response
     {
         $tour->update($request->validated());
+
         return (new TourResource($tour))->response()->setStatusCode(Response::HTTP_OK);
     }
 

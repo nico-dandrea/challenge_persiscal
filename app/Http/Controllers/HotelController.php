@@ -39,6 +39,7 @@ class HotelController extends Controller
     public function store(\App\Http\Requests\StoreHotelRequest $request): Response
     {
         $hotel = Hotel::create($request->validated());
+
         return (new HotelResource($hotel))->response()->setStatusCode(Response::HTTP_CREATED);
     }
 
@@ -50,12 +51,14 @@ class HotelController extends Controller
     public function update(\App\Http\Requests\UpdateHotelRequest $request, Hotel $hotel): Response
     {
         $hotel->update($request->validated());
+
         return (new HotelResource($hotel))->response()->setStatusCode(Response::HTTP_OK);
     }
 
     public function destroy(Hotel $hotel): Response
     {
         $hotel->delete();
+
         return response()->json(['id' => $hotel->id], Response::HTTP_NO_CONTENT);
     }
 }
