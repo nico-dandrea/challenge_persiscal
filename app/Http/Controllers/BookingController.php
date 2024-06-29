@@ -91,7 +91,7 @@ class BookingController extends Controller
         }
     }
 
-    public function export(): \Symfony\Component\HttpFoundation\BinaryFileResponse
+    public function export(): \Symfony\Component\HttpFoundation\BinaryFileResponse | Response
     {
         // Get all the years from every single booking
         $dates = Booking::selectRaw('YEAR(booking_date) as year, MONTH(booking_date) as month')
@@ -100,6 +100,12 @@ class BookingController extends Controller
             ->orderBy('month')
             ->get();
 
-        return (new BookingsExport($dates))->download('bookings.xlsx');
+        if ($dates->isEmpty()) {
+            return response()->json([
+                'message' => 'No bookings found',
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        return (new BookingsExport($dates))->download('bookings.csv', \Maatwebsite\Excel\Excel::CSV);
     }
 }

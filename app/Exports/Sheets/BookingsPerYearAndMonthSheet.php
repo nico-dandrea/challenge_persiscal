@@ -3,30 +3,23 @@
 namespace App\Exports\Sheets;
 
 use App\Models\Booking;
-use Maatwebsite\Excel\Concerns\FromCollection;
+use Illuminate\Contracts\View\View;
+use Maatwebsite\Excel\Concerns\FromView;
 use Maatwebsite\Excel\Concerns\WithTitle;
 
-class BookingsPerYearAndMonthSheet implements FromCollection, WithTitle
+class BookingsPerYearAndMonthSheet implements FromView, WithTitle
 {
-    private $month;
-
-    private $year;
-
-    public function __construct(int $year, int $month)
-    {
-        $this->month = $month;
-        $this->year = $year;
-    }
+    public function __construct(private int $year, private int $month) {}
 
     /**
      * @return Collection
      */
-    public function collection()
+    public function view(): View
     {
-        return Booking::query()
+        return view('exports.bookings', ['bookings' => Booking::query()
             ->whereYear('booking_date', $this->year)
             ->whereMonth('booking_date', $this->month)
-            ->get();
+            ->get()]);
     }
 
     public function title(): string
