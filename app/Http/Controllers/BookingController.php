@@ -4,12 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Exports\BookingsExport;
 use App\Http\Resources\BookingResource;
+use App\Services\Booking as BookingService;
 use App\Models\Booking;
 use Illuminate\Http\JsonResponse as Response;
 use Illuminate\Http\Request;
 
 class BookingController extends Controller
 {
+    public function __construct(protected BookingService $bookingService){}
+
     public function index(Request $request): Response
     {
         $query = Booking::query();
@@ -29,22 +32,10 @@ class BookingController extends Controller
         return BookingResource::collection($bookings->paginate())->response()->setStatusCode(Response::HTTP_OK);
     }
 
-    public function store(Request $request): Response
+    public function store(\App\Http\Requests\StoreBookingRequest $request): Response
     {
-        $validatedData = $request->validate([
-            'tour_id' => 'required|exists:tours,id',
-            'hotel_id' => 'required|exists:hotels,id',
-            'customer_name' => 'required|string|max:255',
-            'customer_email' => 'required|email|max:255',
-            'number_of_people' => 'required|integer|min:1',
-            'booking_date' => 'required|date',
-        ]);
-
-        $booking = Booking::create($validatedData);
-
-        \App\Events\BookingConfirmed::dispatch($booking->load('tour', 'hotel'));
-
-        return (new BookingResource($booking))->response()->setStatusCode(Response::HTTP_CREATED);
+        return $this->bookingService->create($request->validated())
+                    ->response()->setStatusCode(Response::HTTP_CREATED);
     }
 
     public function show(Booking $booking): Response
@@ -52,20 +43,10 @@ class BookingController extends Controller
         return (new BookingResource($booking))->response()->setStatusCode(Response::HTTP_OK);
     }
 
-    public function update(Request $request, Booking $booking): Response
+    public function update(\App\Http\Requests\UpdateBookingRequest $request, Booking $booking): Response
     {
-        $validatedData = $request->validate([
-            'tour_id' => 'sometimes|exists:tours,id',
-            'hotel_id' => 'sometimes|exists:hotels,id',
-            'customer_name' => 'sometimes|string|max:255',
-            'customer_email' => 'sometimes|email|max:255',
-            'number_of_people' => 'sometimes|integer|min:1',
-            'booking_date' => 'sometimes|date',
-        ]);
-
-        $booking->update($validatedData);
-
-        return (new BookingResource($booking))->response()->setStatusCode(Response::HTTP_OK);
+        return $this->bookingService->update($request->validated(), $booking)
+                    ->response()->setStatusCode(Response::HTTP_OK);
     }
 
     public function destroy(Booking $booking): Response
