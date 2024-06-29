@@ -28,9 +28,3 @@ We hope this project allows you to demonstrate your technical skills and your ab
 6. **Use of FormRequests:** Utilize FormRequests for data validation.
 7. **Use of Traits:** Utilize Traits for code reuse where necessary.
 8. **Use of Enums:** Utilize Enums to improve code readability where possible.
-
-## Proposed Features
-
-1. `Booking` could work like an invoice, storing the price at the time of the creation, calculated by the tour and hotel
-2. `Tour` could have a `ManyToMany` relationship with `Booking`, in this way, we can modify the price of the tour at will, and with the previous item, store the price of the tour at the given time.
-3. Wanted to make a Mock of a fake API to simulate making requests to Hotel API's for example, adding a new status `pending`, simulating the waiting time between the booking and the actual confirmation of it.
