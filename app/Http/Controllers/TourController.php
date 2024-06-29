@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Resources\TourResource;
 use App\Models\Tour;
 use Illuminate\Http\JsonResponse as Response;
-use Illuminate\Http\Request;
 
 class TourController extends Controller
 {
@@ -17,6 +16,7 @@ class TourController extends Controller
         $perPage = $paginationFilters['per_page'] ?? 15;
         $validatedFilters = $request->validated();
         $tours = Tour::listing($tourFilters)->filter($validatedFilters)->paginate($perPage, ['*'], 'page', $page);
+
         return TourResource::collection($tours)->response()->setStatusCode(Response::HTTP_OK);
     }
 

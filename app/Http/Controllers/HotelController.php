@@ -16,6 +16,7 @@ class HotelController extends Controller
         $perPage = $paginationFilters['per_page'] ?? 15;
         $validatedFilters = $request->validated();
         $hotels = Hotel::listing($hotelFilters)->filter($validatedFilters)->paginate($perPage, ['*'], 'page', $page);
+
         return HotelResource::collection($hotels)->response()->setStatusCode(Response::HTTP_OK);
     }
 

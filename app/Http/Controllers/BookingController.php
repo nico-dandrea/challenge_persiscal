@@ -7,7 +7,6 @@ use App\Http\Resources\BookingResource;
 use App\Models\Booking;
 use App\Services\Booking as BookingService;
 use Illuminate\Http\JsonResponse as Response;
-use Illuminate\Http\Request;
 
 class BookingController extends Controller
 {
@@ -24,8 +23,9 @@ class BookingController extends Controller
         // Remove pagination parameters from filters
         unset($filters['page'], $filters['per_page']);
         $bookings = Booking::filter($request->validated())->with(['tour', 'hotel']);
+
         return BookingResource::collection($bookings->paginate($perPage, ['*'], 'page', $page))
-                ->response()->setStatusCode(Response::HTTP_OK);
+            ->response()->setStatusCode(Response::HTTP_OK);
     }
 
     public function store(\App\Http\Requests\StoreBookingRequest $request): Response

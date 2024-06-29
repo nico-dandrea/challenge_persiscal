@@ -22,9 +22,9 @@ trait Filterable
         $dateColumn = Arr::get($filters, 'date');
         $dateFilters = Arr::only($filters, ['from', 'to']);
         $filters = Arr::except($filters, ['date', 'from', 'to', 'order_by', 'order_direction']);
-        
+
         foreach ($filters as $filter => $value) {
-            $method = 'filter' . ucfirst(Str::camel($filter));
+            $method = 'filter'.ucfirst(Str::camel($filter));
             if (method_exists($this, $method)) {
                 $this->{$method}($query, $value);
             }
@@ -98,7 +98,7 @@ trait Filterable
             'end_date' => Tour::class,
         ];
 
-        if (!array_key_exists($dateColumn, $dateFields)) {
+        if (! array_key_exists($dateColumn, $dateFields)) {
             return;
         }
 
