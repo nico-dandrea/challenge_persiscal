@@ -94,10 +94,10 @@ class BookingController extends Controller
     {
         // Get all the years from every single booking
         $dates = Booking::selectRaw('YEAR(booking_date) as year, MONTH(booking_date) as month')
-                        ->distinct()
-                        ->orderBy('year')
-                        ->orderBy('month')
-                        ->get();
+            ->distinct()
+            ->orderBy('year')
+            ->orderBy('month')
+            ->get();
 
         return (new BookingsExport($dates))->download('bookings.xlsx');
     }

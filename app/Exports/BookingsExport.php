@@ -15,9 +15,6 @@ class BookingsExport implements WithMultipleSheets
         protected Collection|array $dates
     ) {}
 
-    /**
-     * @return array
-     */
     public function sheets(): array
     {
         $sheets = [];
