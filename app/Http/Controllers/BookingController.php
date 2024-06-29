@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\BookingsExport;
+use App\Http\Resources\BookingResource;
 use App\Models\Booking;
 use Illuminate\Http\JsonResponse as Response;
 use Illuminate\Http\Request;
@@ -23,9 +24,9 @@ class BookingController extends Controller
 
         $filters = $request->except(['start_date', 'end_date']);
 
-        $bookings = $query->filter($filters)->with(['tour', 'hotel'])->get();
+        $bookings = $query->filter($filters)->with(['tour', 'hotel']);
 
-        return response()->json($bookings, Response::HTTP_OK);
+        return BookingResource::collection($bookings->paginate())->response()->setStatusCode(Response::HTTP_OK);
     }
 
     public function store(Request $request): Response
@@ -43,12 +44,12 @@ class BookingController extends Controller
 
         \App\Events\BookingConfirmed::dispatch($booking->load('tour', 'hotel'));
 
-        return response()->json($booking, Response::HTTP_CREATED);
+        return (new BookingResource($booking))->response()->setStatusCode(Response::HTTP_CREATED);
     }
 
     public function show(Booking $booking): Response
     {
-        return response()->json($booking, Response::HTTP_OK);
+        return (new BookingResource($booking))->response()->setStatusCode(Response::HTTP_OK);
     }
 
     public function update(Request $request, Booking $booking): Response
@@ -64,7 +65,7 @@ class BookingController extends Controller
 
         $booking->update($validatedData);
 
-        return response()->json($booking, Response::HTTP_OK);
+        return (new BookingResource($booking))->response()->setStatusCode(Response::HTTP_OK);
     }
 
     public function destroy(Booking $booking): Response
@@ -77,13 +78,13 @@ class BookingController extends Controller
     public function cancel(Booking $booking): Response
     {
         try {
-            $booking->status = \App\Enums\BookingStatusEnum::CANCELED;
+            $booking->status = \App\Enums\BookingStatusEnum::CANCELLED;
             $booking->save();
 
             return response()->json([
-                'message' => 'The booking has been canceled successfully',
+                'message' => 'The booking has been canceLled successfully',
             ], Response::HTTP_OK);
-        } catch (\App\Exceptions\CannotCancelConfirmedBookingException $e) {
+        } catch (\App\Exceptions\BookingCannotBeCancelledException $e) {
             return response()->json([
                 'message' => $e->getMessage(),
             ], Response::HTTP_BAD_REQUEST);

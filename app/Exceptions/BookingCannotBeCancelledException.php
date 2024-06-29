@@ -4,7 +4,7 @@ namespace App\Exceptions;
 
 use Exception;
 
-class CannotCancelConfirmedBookingException extends Exception
+class BookingCannotBeCancelledException extends Exception
 {
     protected $bookingId;
 

@@ -30,10 +30,10 @@ class BookingStatus implements CastsAttributes
             throw new \InvalidArgumentException('Invalid booking status');
         }
 
-        $canceled = BookingStatusEnum::CANCELED->value;
+        $cancelled = BookingStatusEnum::CANCELLED->value;
 
-        if ($attributes['status'] === $canceled && $status->value === $canceled) {
-            throw new \App\Exceptions\CannotCancelConfirmedBookingException($attributes['id']);
+        if ($attributes['status'] === $cancelled && $status->value === $cancelled) {
+            throw new \App\Exceptions\BookingCannotBeCancelledException($attributes['id']);
         }
 
         return $status;
