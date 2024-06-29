@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\BookingsExport;
 use App\Models\Booking;
 use Illuminate\Http\JsonResponse as Response;
 use Illuminate\Http\Request;
@@ -87,5 +88,17 @@ class BookingController extends Controller
                 'message' => $e->getMessage(),
             ], Response::HTTP_BAD_REQUEST);
         }
+    }
+
+    public function export(): \Symfony\Component\HttpFoundation\BinaryFileResponse
+    {
+        // Get all the years from every single booking
+        $dates = Booking::selectRaw('YEAR(booking_date) as year, MONTH(booking_date) as month')
+                        ->distinct()
+                        ->orderBy('year')
+                        ->orderBy('month')
+                        ->get();
+
+        return (new BookingsExport($dates))->download('bookings.xlsx');
     }
 }
