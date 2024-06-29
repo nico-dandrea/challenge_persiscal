@@ -50,12 +50,12 @@ it('can retrieve a single tour', function () {
 
     $response = $this->getJson("/api/tours/{$tour->id}");
     $response->assertStatus(Response::HTTP_OK)
-        ->assertJson([
+        ->assertJson(['data' => [
             'id' => $tour->id,
             'name' => $tour->name,
             'description' => $tour->description,
             'price' => $tour->price,
-        ]);
+        ]]);
 });
 
 it('returns 404 for a non-existent tour', function () {

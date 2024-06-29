@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\HotelResource;
 use App\Models\Hotel;
+use Illuminate\Http\JsonResponse as Response;
 use Illuminate\Http\Request;
 
 class HotelController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request): Response
     {
         $query = Hotel::query();
 
@@ -29,12 +31,12 @@ class HotelController extends Controller
 
         $filters = $request->except(['min_rating', 'max_rating', 'min_price', 'max_price']);
 
-        $hotels = $query->filter($filters)->get();
+        $hotels = $query->filter($filters);
 
-        return response()->json($hotels, 200);
+        return HotelResource::collection($hotels->paginate())->response()->setStatusCode(Response::HTTP_OK);
     }
 
-    public function store(Request $request)
+    public function store(Request $request): Response
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
@@ -46,15 +48,15 @@ class HotelController extends Controller
 
         $hotel = Hotel::create($validatedData);
 
-        return response()->json($hotel, 201);
+        return (new HotelResource($hotel))->response()->setStatusCode(Response::HTTP_CREATED);
     }
 
-    public function show(Hotel $hotel)
+    public function show(Hotel $hotel): Response
     {
-        return response()->json($hotel, 200);
+        return (new HotelResource($hotel))->response()->setStatusCode(Response::HTTP_OK);
     }
 
-    public function update(Request $request, Hotel $hotel)
+    public function update(Request $request, Hotel $hotel): Response
     {
         $validatedData = $request->validate([
             'name' => 'sometimes|string|max:255',
@@ -66,13 +68,13 @@ class HotelController extends Controller
 
         $hotel->update($validatedData);
 
-        return response()->json($hotel, 200);
+        return (new HotelResource($hotel))->response()->setStatusCode(Response::HTTP_OK);
     }
 
-    public function destroy(Hotel $hotel)
+    public function destroy(Hotel $hotel): Response
     {
         $hotel->delete();
 
-        return response()->json(null, 204);
+        return response()->json(['id' => $hotel->id], Response::HTTP_NO_CONTENT);
     }
 }

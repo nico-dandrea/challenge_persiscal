@@ -9,15 +9,18 @@ uses(TestCase::class, RefreshDatabase::class);
 
 it('can create a hotel', function () {
     $hotelData = Hotel::factory()->make()->toArray();
-
     $response = $this->postJson('/api/hotels', $hotelData);
     $response->assertStatus(Response::HTTP_CREATED)
-        ->assertJsonFragment([
-            'name' => $hotelData['name'],
-            'description' => $hotelData['description'],
-            'address' => $hotelData['address'],
-            'rating' => $hotelData['rating'],
-        ]);
+        ->assertJson(
+            [
+                'data' => [
+                    'name' => $hotelData['name'],
+                    'description' => $hotelData['description'],
+                    'address' => $hotelData['address'],
+                    'rating' => $hotelData['rating'],
+                ],
+            ]
+        );
 });
 
 it('fails to create a hotel with invalid data', function () {
@@ -51,13 +54,17 @@ it('can retrieve a single hotel', function () {
 
     $response = $this->getJson("/api/hotels/{$hotel->id}");
     $response->assertStatus(Response::HTTP_OK)
-        ->assertJson([
-            'id' => $hotel->id,
-            'name' => $hotel->name,
-            'description' => $hotel->description,
-            'address' => $hotel->address,
-            'rating' => $hotel->rating,
-        ]);
+        ->assertJson(
+            [
+                'data' => [
+                    'id' => $hotel->id,
+                    'name' => $hotel->name,
+                    'description' => $hotel->description,
+                    'address' => $hotel->address,
+                    'rating' => $hotel->rating,
+                ],
+            ]
+        );
 });
 
 it('returns 404 for a non-existent hotel', function () {
@@ -82,7 +89,8 @@ it('can update a hotel', function () {
 it('fails to update a hotel with invalid data', function () {
     $hotel = Hotel::factory()->create();
 
-    $response = $this->putJson("/api/hotels/{$hotel->id}",
+    $response = $this->putJson(
+        "/api/hotels/{$hotel->id}",
         ['name' => '', 'description' => '', 'address' => '', 'rating' => '', 'price_per_night' => '']
     );
     $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)

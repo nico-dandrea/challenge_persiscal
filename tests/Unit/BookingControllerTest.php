@@ -20,12 +20,18 @@ it('can create a booking', function () {
 
     $response = $this->postJson('/api/bookings', $bookingData);
     $response->assertStatus(Response::HTTP_CREATED)
-        ->assertJsonFragment([
-            'tour_id' => $tour->id,
-            'hotel_id' => $hotel->id,
-            'customer_name' => $bookingData['customer_name'],
-            'customer_email' => $bookingData['customer_email'],
-        ]);
+        ->assertJson(
+            [
+                'data' => [
+                    'customerName' => $bookingData['customer_name'],
+                    'customerEmail' => $bookingData['customer_email'],
+                    'numberOfPeople' => $bookingData['number_of_people'],
+                    'bookingDate' => $bookingData['booking_date'],
+                    'tour' => ['id' => $tour->id, 'name' => $tour->name],
+                    'hotel' => ['id' => $hotel->id, 'name' => $hotel->name],
+                ],
+            ]
+        );
 });
 
 it('fails to create a booking with invalid data', function () {
@@ -50,7 +56,7 @@ it('can retrieve all bookings performing ok', function () {
     ]);
 
     $this->assertTrue($benchmark['normal'] < 300);
-})->repeat(10)->skip('Skipped until benchmark is fixed');
+})->repeat(10);
 
 it('can retrieve bookings with filters', function () {
     $booking1 = Booking::factory()->create(['booking_date' => now()->subDays(2)]);
@@ -70,11 +76,15 @@ it('can retrieve a single booking', function () {
     $response = $this->getJson("/api/bookings/{$booking->id}");
     $response->assertStatus(Response::HTTP_OK)
         ->assertJson([
-            'id' => $booking->id,
-            'tour_id' => $booking->tour_id,
-            'hotel_id' => $booking->hotel_id,
-            'customer_name' => $booking->customer_name,
-            'customer_email' => $booking->customer_email,
+            'data' => [
+                'id' => $booking->id,
+                'customerName' => $booking->customer_name,
+                'customerEmail' => $booking->customer_email,
+                'numberOfPeople' => $booking->number_of_people,
+                'bookingDate' => $booking->booking_date,
+                'tour' => ['id' => $booking->tour_id, 'name' => $booking->tour->name],
+                'hotel' => ['id' => $booking->hotel_id, 'name' => $booking->hotel->name],
+            ],
         ]);
 });
 
@@ -89,19 +99,28 @@ it('can update a booking', function () {
 
     $response = $this->putJson("/api/bookings/{$booking->id}", $updatedData);
     $response->assertStatus(Response::HTTP_OK)
-        ->assertJsonFragment([
-            'tour_id' => $updatedData['tour_id'],
-            'hotel_id' => $updatedData['hotel_id'],
-            'customer_name' => $updatedData['customer_name'],
-            'customer_email' => $updatedData['customer_email'],
-        ]);
+        ->assertJson(
+            [
+                'data' => [
+                    'id' => $booking->id,
+                    'customerName' => $updatedData['customer_name'],
+                    'customerEmail' => $updatedData['customer_email'],
+                    'numberOfPeople' => $updatedData['number_of_people'],
+                    'bookingDate' => $updatedData['booking_date'],
+                    'tour' => ['id' => $updatedData['tour_id']],
+                    'hotel' => ['id' => $updatedData['hotel_id']],
+                ],
+            ]
+        );
 });
 
 it('fails to update a booking with invalid data', function () {
     $booking = Booking::factory()->create();
 
-    $response = $this->putJson("/api/bookings/{$booking->id}",
-        ['tour_id' => '', 'hotel_id' => '', 'customer_name' => '', 'customer_email' => '', 'number_of_people' => '', 'booking_date' => '']);
+    $response = $this->putJson(
+        "/api/bookings/{$booking->id}",
+        ['tour_id' => '', 'hotel_id' => '', 'customer_name' => '', 'customer_email' => '', 'number_of_people' => '', 'booking_date' => '']
+    );
     $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
         ->assertJsonValidationErrors(['tour_id', 'hotel_id', 'customer_name', 'customer_email', 'number_of_people', 'booking_date']);
 });

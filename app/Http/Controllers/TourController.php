@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\TourResource;
 use App\Models\Tour;
+use Illuminate\Http\JsonResponse as Response;
 use Illuminate\Http\Request;
 
 class TourController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request): Response
     {
         $query = Tour::query();
 
@@ -29,12 +31,12 @@ class TourController extends Controller
 
         $filters = $request->except(['min_price', 'max_price', 'start_date', 'end_date']);
 
-        $tours = $query->filter($filters)->get();
+        $tours = $query->filter($filters);
 
-        return response()->json($tours, 200);
+        return TourResource::collection($tours->paginate())->response()->setStatusCode(Response::HTTP_OK);
     }
 
-    public function store(Request $request)
+    public function store(Request $request): Response
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
@@ -46,15 +48,15 @@ class TourController extends Controller
 
         $tour = Tour::create($validatedData);
 
-        return response()->json($tour, 201);
+        return (new TourResource($tour))->response()->setStatusCode(Response::HTTP_CREATED);
     }
 
-    public function show(Tour $tour)
+    public function show(Tour $tour): Response
     {
-        return response()->json($tour, 200);
+        return (new TourResource($tour))->response()->setStatusCode(Response::HTTP_OK);
     }
 
-    public function update(Request $request, Tour $tour)
+    public function update(Request $request, Tour $tour): Response
     {
         $validatedData = $request->validate([
             'name' => 'sometimes|string|max:255',
@@ -66,13 +68,13 @@ class TourController extends Controller
 
         $tour->update($validatedData);
 
-        return response()->json($tour, 200);
+        return (new TourResource($tour))->response()->setStatusCode(Response::HTTP_OK);
     }
 
-    public function destroy(Tour $tour)
+    public function destroy(Tour $tour): Response
     {
         $tour->delete();
 
-        return response()->json(null, 204);
+        return response()->json(['id' => $tour->id], Response::HTTP_NO_CONTENT);
     }
 }
