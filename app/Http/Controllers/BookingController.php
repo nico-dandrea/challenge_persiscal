@@ -91,7 +91,7 @@ class BookingController extends Controller
         }
     }
 
-    public function export(): \Symfony\Component\HttpFoundation\BinaryFileResponse | Response
+    public function export(): \Symfony\Component\HttpFoundation\BinaryFileResponse|Response
     {
         // Get all the years from every single booking
         $dates = Booking::selectRaw('YEAR(booking_date) as year, MONTH(booking_date) as month')
