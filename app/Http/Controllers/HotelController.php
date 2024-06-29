@@ -36,18 +36,9 @@ class HotelController extends Controller
         return HotelResource::collection($hotels->paginate())->response()->setStatusCode(Response::HTTP_OK);
     }
 
-    public function store(Request $request): Response
+    public function store(\App\Http\Requests\StoreHotelRequest $request): Response
     {
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'required|string',
-            'address' => 'required|string',
-            'rating' => 'required|integer',
-            'price_per_night' => 'required|numeric',
-        ]);
-
-        $hotel = Hotel::create($validatedData);
-
+        $hotel = Hotel::create($request->validated());
         return (new HotelResource($hotel))->response()->setStatusCode(Response::HTTP_CREATED);
     }
 
@@ -56,25 +47,15 @@ class HotelController extends Controller
         return (new HotelResource($hotel))->response()->setStatusCode(Response::HTTP_OK);
     }
 
-    public function update(Request $request, Hotel $hotel): Response
+    public function update(\App\Http\Requests\UpdateHotelRequest $request, Hotel $hotel): Response
     {
-        $validatedData = $request->validate([
-            'name' => 'sometimes|string|max:255',
-            'description' => 'sometimes|string',
-            'address' => 'sometimes|string',
-            'rating' => 'sometimes|integer',
-            'price_per_night' => 'sometimes|numeric',
-        ]);
-
-        $hotel->update($validatedData);
-
+        $hotel->update($request->validated());
         return (new HotelResource($hotel))->response()->setStatusCode(Response::HTTP_OK);
     }
 
     public function destroy(Hotel $hotel): Response
     {
         $hotel->delete();
-
         return response()->json(['id' => $hotel->id], Response::HTTP_NO_CONTENT);
     }
 }
