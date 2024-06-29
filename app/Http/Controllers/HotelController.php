@@ -5,35 +5,18 @@ namespace App\Http\Controllers;
 use App\Http\Resources\HotelResource;
 use App\Models\Hotel;
 use Illuminate\Http\JsonResponse as Response;
-use Illuminate\Http\Request;
 
 class HotelController extends Controller
 {
-    public function index(Request $request): Response
+    public function index(\App\Http\Requests\FilterRequest $request): Response
     {
-        $query = Hotel::query();
-
-        if ($request->has('min_rating')) {
-            $query->where('rating', '>=', $request->min_rating);
-        }
-
-        if ($request->has('max_rating')) {
-            $query->where('rating', '<=', $request->max_rating);
-        }
-
-        if ($request->has('min_price')) {
-            $query->where('price_per_night', '>=', $request->min_price);
-        }
-
-        if ($request->has('max_price')) {
-            $query->where('price_per_night', '<=', $request->max_price);
-        }
-
-        $filters = $request->except(['min_rating', 'max_rating', 'min_price', 'max_price']);
-
-        $hotels = $query->filter($filters);
-
-        return HotelResource::collection($hotels->paginate())->response()->setStatusCode(Response::HTTP_OK);
+        $hotelFilters = $request->only(['min_rating', 'max_rating', 'min_price', 'max_price']);
+        $paginationFilters = $request->only(['page', 'per_page']);
+        $page = $paginationFilters['page'] ?? 1;
+        $perPage = $paginationFilters['per_page'] ?? 15;
+        $validatedFilters = $request->validated();
+        $hotels = Hotel::listing($hotelFilters)->filter($validatedFilters)->paginate($perPage, ['*'], 'page', $page);
+        return HotelResource::collection($hotels)->response()->setStatusCode(Response::HTTP_OK);
     }
 
     public function store(\App\Http\Requests\StoreHotelRequest $request): Response

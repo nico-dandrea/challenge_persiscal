@@ -9,31 +9,15 @@ use Illuminate\Http\Request;
 
 class TourController extends Controller
 {
-    public function index(Request $request): Response
+    public function index(\App\Http\Requests\FilterRequest $request): Response
     {
-        $query = Tour::query();
-
-        if ($request->has('min_price')) {
-            $query->where('price', '>=', $request->min_price);
-        }
-
-        if ($request->has('max_price')) {
-            $query->where('price', '<=', $request->max_price);
-        }
-
-        if ($request->has('start_date')) {
-            $query->where('start_date', '>=', $request->start_date);
-        }
-
-        if ($request->has('end_date')) {
-            $query->where('end_date', '<=', $request->end_date);
-        }
-
-        $filters = $request->except(['min_price', 'max_price', 'start_date', 'end_date']);
-
-        $tours = $query->filter($filters);
-
-        return TourResource::collection($tours->paginate())->response()->setStatusCode(Response::HTTP_OK);
+        $tourFilters = $request->only(['start_date', 'end_date', 'min_price', 'max_price']);
+        $paginationFilters = $request->only(['page', 'per_page']);
+        $page = $paginationFilters['page'] ?? 1;
+        $perPage = $paginationFilters['per_page'] ?? 15;
+        $validatedFilters = $request->validated();
+        $tours = Tour::listing($tourFilters)->filter($validatedFilters)->paginate($perPage, ['*'], 'page', $page);
+        return TourResource::collection($tours)->response()->setStatusCode(Response::HTTP_OK);
     }
 
     public function store(\App\Http\Requests\StoreTourRequest $request): Response
