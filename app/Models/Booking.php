@@ -3,14 +3,14 @@
 namespace App\Models;
 
 use App\Casts\BookingStatus;
-use App\Traits\FiltersNames;
+use App\Traits\Filterable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Booking extends Model
 {
-    use FiltersNames, HasFactory;
+    use Filterable, HasFactory;
 
     /**
      * The attributes that should be cast.

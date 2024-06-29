@@ -13,23 +13,19 @@ class BookingController extends Controller
 {
     public function __construct(protected BookingService $bookingService) {}
 
-    public function index(Request $request): Response
+    public function index(\App\Http\Requests\FilterRequest $request): Response
     {
-        $query = Booking::query();
+        $filters = $request->validated();
 
-        if ($request->has('start_date')) {
-            $query->where('booking_date', '>=', $request->start_date);
-        }
+        // Extract pagination parameters
+        $page = $filters['page'] ?? 1;
+        $perPage = $filters['per_page'] ?? 15;
 
-        if ($request->has('end_date')) {
-            $query->where('booking_date', '<=', $request->end_date);
-        }
-
-        $filters = $request->except(['start_date', 'end_date']);
-
-        $bookings = $query->filter($filters)->with(['tour', 'hotel']);
-
-        return BookingResource::collection($bookings->paginate())->response()->setStatusCode(Response::HTTP_OK);
+        // Remove pagination parameters from filters
+        unset($filters['page'], $filters['per_page']);
+        $bookings = Booking::filter($request->validated())->with(['tour', 'hotel']);
+        return BookingResource::collection($bookings->paginate($perPage, ['*'], 'page', $page))
+                ->response()->setStatusCode(Response::HTTP_OK);
     }
 
     public function store(\App\Http\Requests\StoreBookingRequest $request): Response
