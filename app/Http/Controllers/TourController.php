@@ -36,18 +36,9 @@ class TourController extends Controller
         return TourResource::collection($tours->paginate())->response()->setStatusCode(Response::HTTP_OK);
     }
 
-    public function store(Request $request): Response
+    public function store(\App\Http\Requests\StoreTourRequest $request): Response
     {
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'required|string',
-            'price' => 'required|numeric',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after_or_equal:start_date',
-        ]);
-
-        $tour = Tour::create($validatedData);
-
+        $tour = Tour::create($request->validated());
         return (new TourResource($tour))->response()->setStatusCode(Response::HTTP_CREATED);
     }
 
@@ -56,18 +47,9 @@ class TourController extends Controller
         return (new TourResource($tour))->response()->setStatusCode(Response::HTTP_OK);
     }
 
-    public function update(Request $request, Tour $tour): Response
+    public function update(\App\Http\Requests\UpdateTourRequest $request, Tour $tour): Response
     {
-        $validatedData = $request->validate([
-            'name' => 'sometimes|string|max:255',
-            'description' => 'sometimes|string',
-            'price' => 'sometimes|numeric',
-            'start_date' => 'sometimes|date',
-            'end_date' => 'sometimes|date|after_or_equal:start_date',
-        ]);
-
-        $tour->update($validatedData);
-
+        $tour->update($request->validated());
         return (new TourResource($tour))->response()->setStatusCode(Response::HTTP_OK);
     }
 
