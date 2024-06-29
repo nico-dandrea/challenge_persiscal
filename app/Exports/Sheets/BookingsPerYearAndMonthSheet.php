@@ -9,12 +9,13 @@ use Maatwebsite\Excel\Concerns\WithTitle;
 class BookingsPerYearAndMonthSheet implements FromCollection, WithTitle
 {
     private $month;
+
     private $year;
 
     public function __construct(int $year, int $month)
     {
         $this->month = $month;
-        $this->year  = $year;
+        $this->year = $year;
     }
 
     /**
@@ -22,18 +23,14 @@ class BookingsPerYearAndMonthSheet implements FromCollection, WithTitle
      */
     public function collection()
     {
-        return Booking
-            ::query()
+        return Booking::query()
             ->whereYear('booking_date', $this->year)
             ->whereMonth('booking_date', $this->month)
             ->get();
     }
 
-    /**
-     * @return string
-     */
     public function title(): string
     {
-        return $this->year . '-' . $this->month;
+        return $this->year.'-'.$this->month;
     }
 }
